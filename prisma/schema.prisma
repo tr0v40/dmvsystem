@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cot {
+  id        Int   @id @default(autoincrement())
+  cot       String   @db.VarChar(256)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  fileId    Int
+  File      File     @relation(fields: [fileId], references: [id])
+}
+
+model Customer {
+  id         Int @id @default(autoincrement())
+  name       String @db.VarChar(100)
+  identifier String @db.VarChar(100)
+  User       User[]
+}
+
+model File {
+  id          Int        @id @default(autoincrement())
+  file        String        @db.VarChar(256)
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(6)
+  Cot         Cot[]
+  FilesOnJobs FilesOnJobs[]
+}
+
+model FilesOnJobs {
+  id        Int   @id @default(autoincrement())
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  jobId     Int
+  fileId    Int
+  File      File     @relation(fields: [fileId], references: [id])
+  Job       Job      @relation(fields: [jobId], references: [id])
+}
+
+model Job {
+  id           Int        @id @default(autoincrement())
+  name         String        @db.VarChar(100)
+  observations String
+  jobDmvId     String        @db.VarChar(100)
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  userId       Int
+  FilesOnJobs  FilesOnJobs[]
+  User         User          @relation(fields: [userId], references: [id])
+}
+
+model Translation {
+  id              Int            @id @default(autoincrement())
+  file            String            @db.VarChar(256)
+  createdAt       DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime          @updatedAt @db.Timestamptz(6)
+  TranslationFile TranslationFile[]
+}
+
+model TranslationFile {
+  id                      Int                    @id @default(autoincrement())
+  status                  Int
+  createdAt               DateTime                  @default(now()) @db.Timestamptz(6)
+  updatedAt               DateTime                  @updatedAt @db.Timestamptz(6)
+  translationId           Int
+  Translation             Translation               @relation(fields: [translationId], references: [id])
+  UserOnTranslationsFiles UserOnTranslationsFiles[]
+}
+
+model User {
+  id                      Int                    @id @default(autoincrement())
+  email                   String                    @db.VarChar(256)
+  passwordHash            String                    @db.VarChar(256)
+  level                   Int                       @default(1)
+  isActivated             Boolean                   @default(false)
+  createdAt               DateTime                  @default(now()) @db.Timestamptz(6)
+  updatedAt               DateTime                  @updatedAt @db.Timestamptz(6)
+  customerId              Int
+  Job                     Job[]
+  Customer                Customer                  @relation(fields: [customerId], references: [id])
+  UserOnTranslationsFiles UserOnTranslationsFiles[]
+}
+
+model UserOnTranslationsFiles {
+  id                Int          @id @default(autoincrement())
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(6)
+  userLevel         Int
+  translationFileId Int
+  userId            Int
+  TranslationFile   TranslationFile @relation(fields: [translationFileId], references: [id])
+  User              User            @relation(fields: [userId], references: [id])
+}
