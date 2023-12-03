@@ -39,18 +39,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import UsersColuns from "../users/columns"
+// import { UserInterface } from "../interfaces/pages"
 
-interface Customer {
+// TESTE
+// console.log(UsersColuns)
+// TESTE
+interface UserInterface {
   id: number
   name: string
   identifier: string
 }
-export default function CustomersIndex() {
-  const columns: ColumnDef<Customer>[] = [
+
+const minhaInterfaceConfigurations = Object.keys({} as UsersColuns).map(
+  (campo) => console.log(campo)
+)
+console.log(minhaInterfaceConfigurations)
+// TESTE
+
+export default function UsersIndex() {
+  const columns: ColumnDef<UserInterface>[] = [
     {
-      accessorKey: "name", 
+      accessorKey: "name", // The accessor key for the cell AQUIII
       header: ({ column }) => {
         return (
+          // Criar uma pros
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}

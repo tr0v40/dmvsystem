@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  dmv-system:
+    image: bitnami/postgresql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRESQL_USERNAME=trovao
+      - POSTGRESQL_PASSWORD=avr926zop123
+      - POSTGRESQL_DATABASE=translator
